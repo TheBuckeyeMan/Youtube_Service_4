@@ -12,3 +12,4 @@ aws:
       video: ${VIDEO_BUCKET_KEY} 
       youtube: ${YOUTUBE_BUCKET_KEY}
   region: ${AWS_REGION}
+  
