@@ -3,6 +3,7 @@ package com.example.YoutubeService4.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,11 @@ import net.bramp.ffmpeg.builder.FFmpegBuilder;
 @Service
 public class CompileVideo {
     private static final Logger log = LoggerFactory.getLogger(CompileVideo.class);
+    private S3LoggingService s3LoggingService;
+
+    public CompileVideo(S3LoggingService s3LoggingService){
+        this.s3LoggingService = s3LoggingService;
+    }
 
 
     public Path createVideo(Path audioFile, Path videoFile, String FFMPEG_PATH){
@@ -44,7 +50,7 @@ public class CompileVideo {
             return youtubeVideoFile;
         } catch (IOException e){
             log.error("Error: Unable to compile audio file with video file. Youtube video NOT Created. Line 44 of CompileVideo.java", e);
-            //TODO Add Email Error Handling
+            s3LoggingService.logMessageToS3("Error: Unable to compile audio file with video file. Youtube video NOT Created. Line 44 of CompileVideo.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
             throw new RuntimeException("Error: Unable to compile audio file with video file. Youtube video NOT Created. Line 46 of CompileVideo.java", e);
     }
     }

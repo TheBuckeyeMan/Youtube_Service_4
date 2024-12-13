@@ -5,14 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import com.example.YoutubeService4.service.TriggerService;
 
 @SpringBootApplication
 public class YoutubeService4Application {
     private static final Logger log = LoggerFactory.getLogger(YoutubeService4Application.class);
-	public static void main(String[] args) {
 
+    public static void main(String[] args) {
         int exitCode = 0;
         ConfigurableApplicationContext context = null;
 
@@ -30,18 +29,8 @@ public class YoutubeService4Application {
         } finally {
             if (context != null) {
                 SpringApplication.exit(context);
-                log.info("Service Failed!");
-                log.info("Exiting the service now!");
-                SpringApplication.exit(context);
-                log.info("Service Exited Successfully");
-                System.exit(exitCode);
             }
             log.info("Exiting the service with exit code: {}", exitCode);
-            SpringApplication.exit(context);
-            log.info("Service Failed!");
-            log.info("Exiting the service now!");
-            SpringApplication.exit(context);
-            log.info("Service Exited Successfully");
             System.exit(exitCode);
         }
     }

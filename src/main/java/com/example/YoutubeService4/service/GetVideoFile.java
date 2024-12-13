@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +19,11 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 public class GetVideoFile {
     public static final Logger log = LoggerFactory.getLogger(GetVideoFile.class);
     private S3Client s3Client;
+    private S3LoggingService s3LoggingService;
 
-    public GetVideoFile(S3Client s3Client){
+    public GetVideoFile(S3Client s3Client, S3LoggingService s3LoggingService){
         this.s3Client = s3Client;
+        this.s3LoggingService = s3LoggingService;
     }
 
 
@@ -44,7 +47,7 @@ public class GetVideoFile {
             return tempVideoFile;
         } catch (IOException e){
             log.error("Error: Error while trying to retrieve Video file from S3. Line 46 on GetVideoFile.java", e);
-            //TODO Add in error email here
+            s3LoggingService.logMessageToS3("Error: Error while trying to retrieve Video file from S3. Line 46 on GetVideoFile.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
             throw new RuntimeException("Error: Error while trying to retrieve Video file from S3. Line 48 on GetVideoFile.java",e);
         }
     }
