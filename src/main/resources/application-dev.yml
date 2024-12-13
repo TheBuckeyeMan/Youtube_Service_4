@@ -1,0 +1,15 @@
+spring: 
+  environment: dev
+
+aws:
+  s3:
+    bucket:
+      landing: ${LANDING_BUCKET} 
+      logging: ${LOGGING_BUCKET_NAME} 
+    key:
+      logging: ${LOGGING_BUCKET_KEY} 
+      audio: ${AUDIO_BUCKET_KEY} 
+      video: ${VIDEO_BUCKET_KEY} 
+      youtube: ${YOUTUBE_BUCKET_KEY}
+  region: ${AWS_REGION}
+  

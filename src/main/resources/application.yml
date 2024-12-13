@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: YoutubeService4
+  profiles:
+    active: dev
