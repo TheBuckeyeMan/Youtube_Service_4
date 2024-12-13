@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -18,9 +19,11 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 public class GetAudioFile {
     public static final Logger log = LoggerFactory.getLogger(GetAudioFile.class);
     private S3Client s3Client;
+    private S3LoggingService s3LoggingService;
 
-    public GetAudioFile(S3Client s3Client){
+    public GetAudioFile(S3Client s3Client, S3LoggingService s3LoggingService){
         this.s3Client = s3Client;
+        this.s3LoggingService = s3LoggingService;
     }
 
     public Path getAudio(String landingBucket, String audioBucketKey){
@@ -43,7 +46,7 @@ public class GetAudioFile {
             return tempFile;
         } catch (IOException e){
             log.error("Error: Error while trying to retrieve audio file from S3. Line 43 on GetAudioFile.java", e);
-            //TODO Add in error email here
+            s3LoggingService.logMessageToS3("Error: Error while trying to retrieve audio file from S3. Line 43 on GetAudioFile.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
             throw new RuntimeException("Error: Error while trying to retrieve audio file from S3. Line 43 on GetAudioFile.java",e);
         }
     }
