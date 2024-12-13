@@ -30,7 +30,8 @@ public class CompileVideo {
                     .setFormat("mp4")
                     .addExtraArgs("-map", "0:v:0") // Map video stream from first input
                     .addExtraArgs("-map", "1:a:0") // Map audio stream from second input
-                    .addExtraArgs("-c:v", "libx264") // Re-encode video for compatibility
+                    //.addExtraArgs("-c:v", "libx264") // Re-encode video for compatibility - Required if Original video does not have H.264 encoding
+                    .addExtraArgs("-c:v", "copy")
                     .addExtraArgs("-c:a", "aac") // Encode audio in AAC format
                     .addExtraArgs("-b:a", "192k") // Set audio bitrate
                     .addExtraArgs("-shortest") // Match the shortest input duration

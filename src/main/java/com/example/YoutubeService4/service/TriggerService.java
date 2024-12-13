@@ -13,9 +13,7 @@ public class TriggerService {
     public static final Logger log = LoggerFactory.getLogger(TriggerService.class);    
     private DecideVideoKey decideVideoKey;
     private GetAudioFile getAudioFile;
-    private GetAudioLength getAudioLength;
     private GetVideoFile getVideoFile;
-    private TrimVideo trimVideo;
     private CompileVideo compileVideo;
     private PostFileToS3 postFileToS3;
 
@@ -34,12 +32,10 @@ public class TriggerService {
     private static final String FFPROBE_PATH = "/usr/bin/ffprobe";
     private static final String FFMPEG_PATH = "/usr/bin/ffmpeg";
 
-    public TriggerService(DecideVideoKey decideVideoKey, GetAudioFile getAudioFile, GetAudioLength getAudioLength, GetVideoFile getVideoFile, TrimVideo trimVideo, CompileVideo compileVideo, PostFileToS3 postFileToS3){
+    public TriggerService(DecideVideoKey decideVideoKey, GetAudioFile getAudioFile, GetVideoFile getVideoFile,CompileVideo compileVideo, PostFileToS3 postFileToS3){
         this.decideVideoKey = decideVideoKey;
         this.getAudioFile = getAudioFile;
-        this.getAudioLength = getAudioLength;
         this.getVideoFile = getVideoFile;
-        this.trimVideo = trimVideo;
         this.compileVideo = compileVideo;
         this.postFileToS3 = postFileToS3;
     }
@@ -51,14 +47,8 @@ public class TriggerService {
         //Get Audio File
         Path audioFile = getAudioFile.getAudio(landingBucket, audioBucketKey);
 
-        //Get Audio File Length
-        long audioLength = getAudioLength.audioLength(audioFile, FFPROBE_PATH);
-
         //Get Video File
         Path videoFile = getVideoFile.getVideo(landingBucket, videoBuckeyKey);
-
-        //Trim the video file
-        //Path trimmedVideo = trimVideo.newVideo(videoFile, audioLength, FFMPEG_PATH);
 
         //Compile Video File
         Path youtubeVideo = compileVideo.createVideo(audioFile, videoFile, FFMPEG_PATH);
@@ -68,6 +58,12 @@ public class TriggerService {
         //Add in email loggging
 
         //Add Tests
+
+        //TODO 
+        //1. Remove get audio length - not needed
+        //2. Remove Trim Video - not needed 
+        //3 Refactor so that we dont have 2 methods to get the video and audio, refactr so we just need to have 1 set of code
+        
         return "Servies have all been triggered Successfully!";
     }
 
