@@ -14,6 +14,7 @@ public class YoutubeService4Application {
 	public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(YoutubeService4Application.class, args);
 
+        //Run All Services
         TriggerService triggerService = context.getBean(TriggerService.class);
         triggerService.run();
 
