@@ -15,6 +15,8 @@ public class TriggerService {
     private GetAudioFile getAudioFile;
     private GetAudioLength getAudioLength;
     private GetVideoFile getVideoFile;
+    private TrimVideo trimVideo;
+    private CompileVideo compileVideo;
 
     @Value("${aws.s3.key.video}")
     private String VideoBucketKey;
@@ -26,12 +28,15 @@ public class TriggerService {
     private String audioBucketKey;
 
     private static final String FFPROBE_PATH = "/usr/bin/ffprobe";
+    private static final String FFMPEG_PATH = "/usr/bin/ffmpeg";
 
-    public TriggerService(DecideVideoKey decideVideoKey, GetAudioFile getAudioFile, GetAudioLength getAudioLength, GetVideoFile getVideoFile){
+    public TriggerService(DecideVideoKey decideVideoKey, GetAudioFile getAudioFile, GetAudioLength getAudioLength, GetVideoFile getVideoFile, TrimVideo trimVideo, CompileVideo compileVideo){
         this.decideVideoKey = decideVideoKey;
         this.getAudioFile = getAudioFile;
         this.getAudioLength = getAudioLength;
         this.getVideoFile = getVideoFile;
+        this.trimVideo = trimVideo;
+        this.compileVideo = compileVideo;
     }
 
     public String run(){
@@ -42,15 +47,16 @@ public class TriggerService {
         Path audioFile = getAudioFile.getAudio(landingBucket, audioBucketKey);
 
         //Get Audio File Length
-        double audioLength = getAudioLength.audioLength(audioFile, FFPROBE_PATH);
+        long audioLength = getAudioLength.audioLength(audioFile, FFPROBE_PATH);
 
         //Get Video File
         Path videoFile = getVideoFile.getVideo(landingBucket, videoBuckeyKey);
 
-
         //Trim the video file
+        Path trimmedVideo = trimVideo.newVideo(videoFile, audioLength, FFMPEG_PATH);
 
         //Compile Video File
+        Path youtubeVideo = compileVideo.createVideo(audioFile, trimmedVideo, FFMPEG_PATH)
 
         //Save to S3
 

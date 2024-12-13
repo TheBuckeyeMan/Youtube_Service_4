@@ -11,7 +11,7 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 public class GetAudioLength {
     private static final Logger log = LoggerFactory.getLogger(GetAudioLength.class);
 
-    public double audioLength(Path audioFile, String FFPROBE_PATH){
+    public long audioLength(Path audioFile, String FFPROBE_PATH){
         try {
             FFprobe ffprobe = new FFprobe(FFPROBE_PATH);
 
@@ -19,8 +19,9 @@ public class GetAudioLength {
 
             //Extract Length
             double durationInSeconds = probeResult.getFormat().duration;
+            long longDuration = (long) Math.ceil(durationInSeconds);
             log.info("Audio Length of the Audio File is: " + durationInSeconds);
-            return durationInSeconds;
+            return longDuration;
         } catch (Exception e) {
             log.error("Error: Error while retrieving audio length on GetAudioLength Line 27");
             //TODO Add email error
