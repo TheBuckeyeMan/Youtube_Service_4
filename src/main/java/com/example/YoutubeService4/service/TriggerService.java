@@ -14,6 +14,7 @@ public class TriggerService {
     private DecideVideoKey decideVideoKey;
     private GetAudioFile getAudioFile;
     private GetAudioLength getAudioLength;
+    private GetVideoFile getVideoFile;
 
     @Value("${aws.s3.key.video}")
     private String VideoBucketKey;
@@ -24,11 +25,13 @@ public class TriggerService {
     @Value("${aws.s3.key.audio}")
     private String audioBucketKey;
 
+    private static final String FFPROBE_PATH = "/usr/bin/ffprobe";
 
-    public TriggerService(DecideVideoKey decideVideoKey, GetAudioFile getAudioFile, GetAudioLength getAudioLength){
+    public TriggerService(DecideVideoKey decideVideoKey, GetAudioFile getAudioFile, GetAudioLength getAudioLength, GetVideoFile getVideoFile){
         this.decideVideoKey = decideVideoKey;
         this.getAudioFile = getAudioFile;
         this.getAudioLength = getAudioLength;
+        this.getVideoFile = getVideoFile;
     }
 
     public String run(){
@@ -39,8 +42,11 @@ public class TriggerService {
         Path audioFile = getAudioFile.getAudio(landingBucket, audioBucketKey);
 
         //Get Audio File Length
+        double audioLength = getAudioLength.audioLength(audioFile, FFPROBE_PATH);
 
         //Get Video File
+        Path videoFile = getVideoFile.getVideo(landingBucket, videoBuckeyKey);
+
 
         //Trim the video file
 
