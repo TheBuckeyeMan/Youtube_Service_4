@@ -16,7 +16,7 @@ public class CompileVideo {
     private static final Logger log = LoggerFactory.getLogger(CompileVideo.class);
 
 
-    public Path createVideo(Path audioFile, Path trimmedVideoFile, String FFMPEG_PATH){
+    public Path createVideo(Path audioFile, Path videoFile, String FFMPEG_PATH){
         try{
             log.info("Initializing Video Compile");
             Path youtubeVideoFile = Files.createTempFile("youtube-video-" + UUID.randomUUID(), ".mp4");
@@ -24,13 +24,16 @@ public class CompileVideo {
             // Initialize FFmpeg and build the trimming command
             FFmpeg ffmpeg = new FFmpeg(FFMPEG_PATH);
             FFmpegBuilder builder = new FFmpegBuilder()
-                    .setInput(trimmedVideoFile.toAbsolutePath().toString()) // Input video file
+                    .setInput(videoFile.toAbsolutePath().toString()) // Input video file
                     .addInput(audioFile.toAbsolutePath().toString())
                     .addOutput(youtubeVideoFile.toAbsolutePath().toString()) // Output video file
                     .setFormat("mp4")
-                    .addExtraArgs("-c:v", "copy")
-                    .addExtraArgs("-c:a", "aac")
-                    .addExtraArgs("-shortest") //This ensures that the video is only as long as the shortest input. We do NOT Need a seporate service to shorten Video
+                    .addExtraArgs("-map", "0:v:0") // Map video stream from first input
+                    .addExtraArgs("-map", "1:a:0") // Map audio stream from second input
+                    .addExtraArgs("-c:v", "libx264") // Re-encode video for compatibility
+                    .addExtraArgs("-c:a", "aac") // Encode audio in AAC format
+                    .addExtraArgs("-b:a", "192k") // Set audio bitrate
+                    .addExtraArgs("-shortest") // Match the shortest input duration
                     .done();
   
             FFmpegExecutor executor = new FFmpegExecutor(ffmpeg);

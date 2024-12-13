@@ -21,6 +21,7 @@ public class PostFileToS3 {
 
     public void PostFileToS3Bucket(Path youtubeVideo, String landingBucket, String youtubeBucketKey){
         try{
+            log.info("Uploading the Youtube Video to AWS S3");
             //Verify file Exists
             if (!youtubeVideo.toFile().exists()){
                 log.error("Error: File does not exist: {}", youtubeVideo);
