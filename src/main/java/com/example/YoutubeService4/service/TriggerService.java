@@ -17,6 +17,7 @@ public class TriggerService {
     private GetVideoFile getVideoFile;
     private TrimVideo trimVideo;
     private CompileVideo compileVideo;
+    private PostFileToS3 postFileToS3;
 
     @Value("${aws.s3.key.video}")
     private String VideoBucketKey;
@@ -27,16 +28,20 @@ public class TriggerService {
     @Value("${aws.s3.key.audio}")
     private String audioBucketKey;
 
+    @Value("${aws.s3.key.youtube}")
+    private String youtubeBucketKey;
+
     private static final String FFPROBE_PATH = "/usr/bin/ffprobe";
     private static final String FFMPEG_PATH = "/usr/bin/ffmpeg";
 
-    public TriggerService(DecideVideoKey decideVideoKey, GetAudioFile getAudioFile, GetAudioLength getAudioLength, GetVideoFile getVideoFile, TrimVideo trimVideo, CompileVideo compileVideo){
+    public TriggerService(DecideVideoKey decideVideoKey, GetAudioFile getAudioFile, GetAudioLength getAudioLength, GetVideoFile getVideoFile, TrimVideo trimVideo, CompileVideo compileVideo, PostFileToS3 postFileToS3){
         this.decideVideoKey = decideVideoKey;
         this.getAudioFile = getAudioFile;
         this.getAudioLength = getAudioLength;
         this.getVideoFile = getVideoFile;
         this.trimVideo = trimVideo;
         this.compileVideo = compileVideo;
+        this.postFileToS3 = postFileToS3;
     }
 
     public String run(){
@@ -53,13 +58,13 @@ public class TriggerService {
         Path videoFile = getVideoFile.getVideo(landingBucket, videoBuckeyKey);
 
         //Trim the video file
-        Path trimmedVideo = trimVideo.newVideo(videoFile, audioLength, FFMPEG_PATH);
+        //Path trimmedVideo = trimVideo.newVideo(videoFile, audioLength, FFMPEG_PATH);
 
         //Compile Video File
-        Path youtubeVideo = compileVideo.createVideo(audioFile, trimmedVideo, FFMPEG_PATH)
+        Path youtubeVideo = compileVideo.createVideo(audioFile, videoFile, FFMPEG_PATH);
 
         //Save to S3
-
+        postFileToS3.PostFileToS3Bucket(youtubeVideo,landingBucket ,youtubeBucketKey);
         //Add in email loggging
 
         //Add Tests
