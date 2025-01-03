@@ -30,7 +30,7 @@ public class DecideVideoKey {
 
     public String getRandomNumber(){
         Random random = new Random();
-        int number = random.nextInt(4) + 1;
+        int number = random.nextInt(10) + 1;
         return String.valueOf(number);
     }
 }
