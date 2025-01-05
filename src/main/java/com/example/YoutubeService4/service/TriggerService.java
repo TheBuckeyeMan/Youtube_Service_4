@@ -52,12 +52,15 @@ public class TriggerService {
         String videoBuckeyKey = decideVideoKey.getVideoKey(VideoBucketKey);
 
         //Get Audio File
+        log.info("Attempting to get Audio File");
         Path audioFile = getAudioFile.getAudio(landingBucket, audioBucketKey);
 
         //Get Video File
+        log.info("Attempting to get Video File");
         Path videoFile = getVideoFile.getVideo(landingBucket, videoBuckeyKey);
 
         //Get Speech Marks for video
+        log.info("Attempting to get Speech Marks File");
         List<SubtitleEntry> speechMarksData = speechMarks.getSpeechMarksForVideo(landingBucket, speechMarksKey);
 
         //Compile Video File
