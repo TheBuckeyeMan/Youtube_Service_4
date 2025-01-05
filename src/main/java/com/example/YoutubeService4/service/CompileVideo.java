@@ -62,14 +62,15 @@ public class CompileVideo {
                 fontPath, text, startTime, endTime));
             }
             
-
             // Remove trailing comma
             if (subtitlesFilter.length() > 0) {
                 subtitlesFilter.setLength(subtitlesFilter.length() - 1);
             }
             log.info("Generated FFmpeg subtitles filter: {}", subtitlesFilter.toString());
 
+            //Add params to resize video
             String videoResizeFilter = "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920";
+            //Combine Video reformat and subtitles
             String combinedFilters = videoResizeFilter + "," + subtitlesFilter.toString();
 
             // Initialize FFmpeg and build the trimming command
@@ -101,10 +102,5 @@ public class CompileVideo {
             s3LoggingService.logMessageToS3("Error: Unable to compile audio file with video file. Youtube video NOT Created. Line 44 of CompileVideo.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
             throw new RuntimeException("Error: Unable to compile audio file with video file. Youtube video NOT Created. Line 46 of CompileVideo.java", e);
     }
-    }
-
-    // Helper method to format time in seconds to FFmpeg's time format
-    private String formatTime(double timeInSeconds) {
-        return String.format("%.3f", timeInSeconds);
     }
 }
