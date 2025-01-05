@@ -68,7 +68,7 @@ public class TriggerService {
 
         //Add in email loggging
         log.info("The Service has successfully complete and the audio file is saved in the " + youtubeBucketKey + " Directory of the " + landingBucket + " Bucket!");
-        //s3LoggingService.logMessageToS3("Succcess: Success occured at: " + LocalDateTime.now() + " On: youtube-service-4" + ",");
+        s3LoggingService.logMessageToS3("Succcess: Success occured at: " + LocalDateTime.now() + " On: youtube-service-4" + ",");
         log.info("Final: The ECS Task has triggered successfully and the audio file is now saved in the S3 Bucket: " + landingBucket);
         return "Servies have all been triggered Successfully!";
 
