@@ -1,6 +1,8 @@
 package com.example.YoutubeService4.service;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -28,6 +30,17 @@ public class CompileVideo {
             log.info("Initializing Video Compile");
             Path youtubeVideoFile = Files.createTempFile("youtube-video-" + UUID.randomUUID(), ".mp4");
 
+            // Load the font file 
+            ClassLoader classLoader = getClass().getClassLoader();
+            URL fontUrl = classLoader.getResource("assets/TitanOne-Regular.ttf");
+            if (fontUrl == null) {
+                throw new RuntimeException("Font file not found in resources: assets/TitanOne-Regular.ttf");
+            }
+            File tempFontFile = Files.createTempFile("font", ".ttf").toFile();
+            Files.copy(fontUrl.openStream(), tempFontFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            String fontPath = tempFontFile.getAbsolutePath();
+            log.info("The value of the font file path is: " + fontPath);
+
             //Build the subtitles for the video
             StringBuilder subtitlesFilter = new StringBuilder();
             for (int i = 0; i < speechMarkData.size(); i++) {
@@ -42,20 +55,22 @@ public class CompileVideo {
                     // Default duration for the last word
                     endTime = startTime + 1.0; // 1 second
                 }
-            
                 String text = entry.getValue();
                 subtitlesFilter.append(String.format(
-                    "drawtext=fontfile=/path/to/font.ttf:fontsize=72:fontcolor=white:borderw=4:bordercolor=black:" +
-                    "text='%s':enable='between(t\\,%.3f\\,%.3f)':x=(w-text_w)/2:y=(h-text_h)/2,", 
-                    text, startTime, endTime));
+                "drawtext=fontfile='%s':fontsize=125:fontcolor=white:borderw=10:bordercolor=black:" +
+                "text='%s':enable='between(t\\,%.3f\\,%.3f)':x=(w-text_w)/2:y=(h-text_h)/2,", 
+                fontPath, text, startTime, endTime));
             }
             
+
             // Remove trailing comma
             if (subtitlesFilter.length() > 0) {
                 subtitlesFilter.setLength(subtitlesFilter.length() - 1);
             }
             log.info("Generated FFmpeg subtitles filter: {}", subtitlesFilter.toString());
-            log.debug("Generated FFmpeg subtitles filter: {}", subtitlesFilter.toString());
+
+            String videoResizeFilter = "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920";
+            String combinedFilters = videoResizeFilter + "," + subtitlesFilter.toString();
 
             // Initialize FFmpeg and build the trimming command
             FFmpeg ffmpeg = new FFmpeg(FFMPEG_PATH);
@@ -72,7 +87,8 @@ public class CompileVideo {
                     .addExtraArgs("-c:a", "aac") // Encode audio in AAC format
                     .addExtraArgs("-b:a", "192k") // Set audio bitrate
                     .addExtraArgs("-shortest") // Match the shortest input duration
-                    .addExtraArgs("-vf", subtitlesFilter.toString()) // Add Words to Video
+                    .addExtraArgs("-vf", combinedFilters) // Resize and pad video
+                    //.addExtraArgs("-vf", subtitlesFilter.toString()) // uncomment if all we need is to add words, but keep original video size
                     .done();
   
             FFmpegExecutor executor = new FFmpegExecutor(ffmpeg);
