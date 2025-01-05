@@ -8,6 +8,17 @@
 		<version>3.4.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>2.20.19</version> <!-- Ensure it matches your SDK version -->
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<groupId>com.example</groupId>
 	<artifactId>YoutubeService4</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -47,10 +58,13 @@
 		</dependency>
 		<!--AWS Dependencies-->
 		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>s3</artifactId>
-			<version>2.20.19</version> <!-- Use the latest version -->
-		</dependency>
+    <groupId>software.amazon.awssdk</groupId>
+		<artifactId>s3</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>software.amazon.awssdk</groupId>
+		<artifactId>aws-crt-client</artifactId>
+	</dependency>
 		<!--Video and Audio Dependencies-->
 		<dependency>
 			<groupId>net.bramp.ffmpeg</groupId>
