@@ -43,15 +43,10 @@ public class CompileVideo {
                     endTime = startTime + 1.0; // 1 second
                 }
             
-                // Ensure duration is reasonable
-                // if (endTime - startTime < 0.5) { // Minimum duration of 0.5 seconds
-                //     endTime = startTime + 0.5;
-                // }
-            
-                String text = sanitizeText(entry.getValue());
+                String text = entry.getValue();
                 subtitlesFilter.append(String.format(
                     "drawtext=fontfile=/path/to/font.ttf:fontsize=72:fontcolor=white:borderw=4:bordercolor=black:" +
-                    "text='%s':enable='between(t,%.3f,%.3f)':x=(w-text_w)/2:y=(h-text_h)/2,", 
+                    "text='%s':enable='between(t\\,%.3f\\,%.3f)':x=(w-text_w)/2:y=(h-text_h)/2,", 
                     text, startTime, endTime));
             }
             
@@ -90,25 +85,6 @@ public class CompileVideo {
             s3LoggingService.logMessageToS3("Error: Unable to compile audio file with video file. Youtube video NOT Created. Line 44 of CompileVideo.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
             throw new RuntimeException("Error: Unable to compile audio file with video file. Youtube video NOT Created. Line 46 of CompileVideo.java", e);
     }
-    }
-
-
-    // Helper method to sanitize subtitle text
-    private String sanitizeText(String text) {
-        return text.replace("\\", "\\\\") // Escape backslashes first
-                   .replace("'", "\\''")   // Escape single quotes for FFmpeg
-                   .replace("\"", "\\\"") // Escape double quotes
-                   .replace("\n", " ")    // Replace newlines with spaces
-                   .replace("\r", " ")    // Replace carriage returns with spaces
-                   .replace("%", "")   // Escape percent signs
-                   .replace("$", "\\$")   // Escape dollar signs
-                   .replace("#", "\\#")   // Escape hash signs
-                   .replace("@", "\\@")   // Escape at symbols
-                   .replace("^", "\\^")   // Escape carets
-                   .replace("&", "\\&")   // Escape ampersands
-                   .replace("*", "\\*")   // Escape asterisks
-                   .replace("(", "\\(")   // Escape opening parentheses
-                   .replace(")", "\\)");  // Escape closing parentheses
     }
 
     // Helper method to format time in seconds to FFmpeg's time format

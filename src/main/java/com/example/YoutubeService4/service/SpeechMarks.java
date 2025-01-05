@@ -8,14 +8,13 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
-//chile is SubtitleEntry
+//Child is SubtitleEntry
 @Service
 public class SpeechMarks {
     private static final Logger log = LoggerFactory.getLogger(SpeechMarks.class);
@@ -59,7 +58,6 @@ public class SpeechMarks {
         }
     };
 
-
     //Service to prep SpeechMarks for Video Compile
     public List<SubtitleEntry> getSpeechMarksForVideo(String landingBucket, String speechMarksBucketKey){
         try{
@@ -76,6 +74,7 @@ public class SpeechMarks {
             for (String line : lines){
                 try{
                     SubtitleEntry entry = gson.fromJson(line.trim(), SubtitleEntry.class);
+                    entry.setValue(sanitizeText(entry.getValue()));
                     subtitles.add(entry);
 
                 } catch (Exception e){
@@ -84,13 +83,33 @@ public class SpeechMarks {
             }
             
             log.info("Successfully parsed {} subtitle entries.", subtitles.size());
+            log.info("The value of the subtitles are: " + subtitles);
+            log.info("The types of the subtitles are: " + subtitles.stream().map(SubtitleEntry::getType).toList());
+            log.info("The values of the subtitles are: " + subtitles.stream().map(SubtitleEntry::getValue).toList());
             return subtitles;
         } catch (Exception e){
             log.error("Error parsing speechMarks JSON from S3: {}", e.getMessage(), e);
             s3LoggingService.logMessageToS3("Error: Error parsing speechMarks JSON from string to required format Line 80 of SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-3" + ",");
             return new ArrayList<>();
         }
-        
     }
-    
+    // Helper method to sanitize subtitle text
+    private String sanitizeText(String text) {
+        return text.replace("\\", "\\\\") // Escape backslashes
+                   .replace("\\\\'", "'") // Handle pre-escaped single quotes
+                   .replace("'", "\\\\'") // Escape single quotes for FFmpeg
+                   .replace("\"", "\\\"") // Escape double quotes
+                   .replace("\n", " ")    // Replace newlines with spaces
+                   .replace("\r", " ")    // Replace carriage returns with spaces
+                   .replaceAll("[^\\w\\s]", "") // Remove all special characters except words and spaces
+                   .replace("%", "")      // Remove percent signs
+                   .replace("$", "\\$")   // Escape dollar signs
+                   .replace("#", "\\#")   // Escape hash signs
+                   .replace("@", "\\@")   // Escape at symbols
+                   .replace("^", "\\^")   // Escape carets
+                   .replace("&", "\\&")   // Escape ampersands
+                   .replace("*", "\\*")   // Escape asterisks
+                   .replace("(", "\\(")   // Escape opening parentheses
+                   .replace(")", "\\)");  // Escape closing parentheses
+    }
 }
