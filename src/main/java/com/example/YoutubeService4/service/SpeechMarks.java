@@ -53,7 +53,7 @@ public class SpeechMarks {
             }
         } catch (Exception e){
             log.error("Error Reading file form speechMarks S3: {}", e.getMessage(),e);
-            s3LoggingService.logMessageToS3("Error: Error Reading file form S3 Line 50 of SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-3" + ",");
+            s3LoggingService.logMessageToS3("Error: Error Reading file form S3 Line 50 of SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
             return "Error: Unable to read speechMarks file contents.";
         }
     };
