@@ -29,6 +29,7 @@ public class SpeechMarks {
     //Method gets the saved speech marks from s3
     public String getSpeechMarks(String landingBucket, String speechMarksBucketKey){
         try{
+            log.info("Building S3 Request for Speech Marks");
             //This Creates the Get request to AWS S3
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                                                                 .bucket(landingBucket)
@@ -36,6 +37,7 @@ public class SpeechMarks {
                                                                 .build();
 
             //Convert byte array to string
+            log.info("Executing the request to get Speech Marks");
             CompletableFuture<String> basicContentFuture = s3Client.getObject(getObjectRequest, AsyncResponseTransformer.toBytes()).thenApply(responseBytes -> {
                 String basicContent = new String(responseBytes.asByteArray(),StandardCharsets.UTF_8);
                 log.info("The content from the speechMarks file saved in the speechMarksData variable is: " + basicContent);
@@ -60,6 +62,7 @@ public class SpeechMarks {
 
     //Service to prep SpeechMarks for Video Compile
     public List<SubtitleEntry> getSpeechMarksForVideo(String landingBucket, String speechMarksBucketKey){
+        log.info("Creating Speech Marks");
         try{
             String speechMarksJson = getSpeechMarks(landingBucket,speechMarksBucketKey);
             if (speechMarksJson == null || speechMarksJson.trim().isEmpty()){
