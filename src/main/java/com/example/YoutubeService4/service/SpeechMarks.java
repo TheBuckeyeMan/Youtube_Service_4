@@ -48,7 +48,7 @@ public class SpeechMarks {
                 return basicFileContent;
             } else {
                 log.error("Error: speechMarks Content is blank, or was unable to be retrieved form source");
-                s3LoggingService.logMessageToS3("Error: SpeechMarks Content is blank, or was unable to be retrieved form source - line 45 on SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-3" + ",");
+                s3LoggingService.logMessageToS3("Error: SpeechMarks Content is blank, or was unable to be retrieved form source - line 45 on SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
                 return "Error: speechMarks Content is blank, or was unable to be retrieved form source";
             }
         } catch (Exception e){
@@ -64,7 +64,7 @@ public class SpeechMarks {
             String speechMarksJson = getSpeechMarks(landingBucket,speechMarksBucketKey);
             if (speechMarksJson == null || speechMarksJson.trim().isEmpty()){
                 log.error("Speech marks JSON is empty or null.");
-                s3LoggingService.logMessageToS3("Error: Speech marks JSON is empty or null Line 67 of SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-3" + ",");
+                s3LoggingService.logMessageToS3("Error: Speech marks JSON is empty or null Line 67 of SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
                 return new ArrayList<>();
             }
 
@@ -89,7 +89,7 @@ public class SpeechMarks {
             return subtitles;
         } catch (Exception e){
             log.error("Error parsing speechMarks JSON from S3: {}", e.getMessage(), e);
-            s3LoggingService.logMessageToS3("Error: Error parsing speechMarks JSON from string to required format Line 80 of SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-3" + ",");
+            s3LoggingService.logMessageToS3("Error: Error parsing speechMarks JSON from string to required format Line 80 of SpeechMarks.java: " + LocalDate.now() + " On: youtube-service-4" + ",");
             return new ArrayList<>();
         }
     }
